@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import { Creature, SKELETON_TEMPLATE, ZOMBIE_TEMPLATE, CreatureType } from "@/types/creature";
+import { Creature, SKELETON_TEMPLATE, ZOMBIE_TEMPLATE, CreatureType, getDamageBonus } from "@/types/creature";
 import { toast } from "sonner";
 
 interface AddCreatureDialogProps {
@@ -17,7 +17,6 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
   const [name, setName] = useState("");
   const [type, setType] = useState<CreatureType>("SCHELETRO");
   const [wizardLevel, setWizardLevel] = useState(1);
-  const [proficiencyBonus, setProficiencyBonus] = useState(2);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +34,6 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
       id: crypto.randomUUID(),
       name: name.trim(),
       wizardLevel,
-      proficiencyBonus,
       hpMax,
       hpCurrent: hpMax,
     };
@@ -46,7 +44,6 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
     setName("");
     setType("SCHELETRO");
     setWizardLevel(1);
-    setProficiencyBonus(2);
   };
 
   return (
@@ -88,41 +85,31 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="wizardLevel">Livello Mago</Label>
-              <Input
-                id="wizardLevel"
-                type="number"
-                min="1"
-                max="20"
-                value={wizardLevel}
-                onChange={(e) => setWizardLevel(Number(e.target.value))}
-                className="bg-muted border-border"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="proficiencyBonus">Bonus Competenza</Label>
-              <Input
-                id="proficiencyBonus"
-                type="number"
-                min="2"
-                max="6"
-                value={proficiencyBonus}
-                onChange={(e) => setProficiencyBonus(Number(e.target.value))}
-                className="bg-muted border-border"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="wizardLevel">Livello Mago</Label>
+            <Input
+              id="wizardLevel"
+              type="number"
+              min="1"
+              max="20"
+              value={wizardLevel}
+              onChange={(e) => setWizardLevel(Number(e.target.value))}
+              className="bg-muted border-border"
+            />
           </div>
 
-          <div className="bg-muted/50 p-3 rounded text-sm space-y-1">
+          <div className="bg-muted/50 p-3 rounded text-sm space-y-2">
             <p className="text-muted-foreground">
               PF Massimi:{" "}
               <span className="font-bold text-foreground">
                 {(type === "SCHELETRO" ? 13 : 22) + wizardLevel}
               </span>
             </p>
+            {wizardLevel >= 6 && (
+              <p className="text-xs text-primary">
+                ✓ Bonus ai danni: +{getDamageBonus(wizardLevel)} (Servitori Non Morti)
+              </p>
+            )}
           </div>
 
           <Button type="submit" className="w-full">

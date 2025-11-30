@@ -49,11 +49,18 @@ export interface Creature {
   actions: Action[];
   specialAbilities: SpecialAbility[];
   items: Item[];
-  proficiencyBonus: number;
   notes?: string;
 }
 
-export const SKELETON_TEMPLATE: Omit<Creature, "id" | "name" | "wizardLevel" | "proficiencyBonus" | "hpMax" | "hpCurrent"> = {
+export const calculateProficiencyBonus = (wizardLevel: number): number => {
+  return Math.floor((wizardLevel - 1) / 4) + 2;
+};
+
+export const getDamageBonus = (wizardLevel: number): number => {
+  return wizardLevel >= 6 ? calculateProficiencyBonus(wizardLevel) : 0;
+};
+
+export const SKELETON_TEMPLATE: Omit<Creature, "id" | "name" | "wizardLevel" | "hpMax" | "hpCurrent"> = {
   type: "SCHELETRO",
   baseHp: 13,
   ac: 13,
@@ -93,7 +100,7 @@ export const SKELETON_TEMPLATE: Omit<Creature, "id" | "name" | "wizardLevel" | "
   items: [],
 };
 
-export const ZOMBIE_TEMPLATE: Omit<Creature, "id" | "name" | "wizardLevel" | "proficiencyBonus" | "hpMax" | "hpCurrent"> = {
+export const ZOMBIE_TEMPLATE: Omit<Creature, "id" | "name" | "wizardLevel" | "hpMax" | "hpCurrent"> = {
   type: "ZOMBIE",
   baseHp: 22,
   ac: 8,

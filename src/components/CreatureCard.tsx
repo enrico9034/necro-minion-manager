@@ -1,4 +1,4 @@
-import { Creature } from "@/types/creature";
+import { Creature, getDamageBonus } from "@/types/creature";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Skull, Swords, Eye, Trash2 } from "lucide-react";
@@ -119,15 +119,18 @@ export const CreatureCard = ({ creature, onDelete, onUpdateHP }: CreatureCardPro
             <Swords className="w-4 h-4" />
             <span>Azioni</span>
           </div>
-          {creature.actions.slice(0, 2).map((action, idx) => (
-            <div key={idx} className="text-sm bg-muted/50 p-2 rounded">
-              <p className="font-semibold text-foreground">{action.name}</p>
-              <p className="text-xs text-muted-foreground">
-                Colpire: +{action.toHit} | Danno: {action.damageDice}+{action.damageBonus}+
-                {creature.proficiencyBonus}
-              </p>
-            </div>
-          ))}
+          {creature.actions.slice(0, 2).map((action, idx) => {
+            const damageBonus = getDamageBonus(creature.wizardLevel);
+            const totalDamage = action.damageBonus + damageBonus;
+            return (
+              <div key={idx} className="text-sm bg-muted/50 p-2 rounded">
+                <p className="font-semibold text-foreground">{action.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  Colpire: +{action.toHit} | Danno: {action.damageDice}+{totalDamage}
+                </p>
+              </div>
+            );
+          })}
         </div>
 
         {/* Actions */}
