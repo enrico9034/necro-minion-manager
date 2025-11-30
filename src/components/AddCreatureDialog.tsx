@@ -27,7 +27,7 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
     }
 
     const template = type === "SCHELETRO" ? SKELETON_TEMPLATE : ZOMBIE_TEMPLATE;
-    const hpMax = template.baseHp + wizardLevel;
+    const hpMax = template.baseHp + (wizardLevel >= 6 ? wizardLevel : 0);
 
     const newCreature: Creature = {
       ...template,
@@ -102,7 +102,7 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
             <p className="text-muted-foreground">
               PF Massimi:{" "}
               <span className="font-bold text-foreground">
-                {(type === "SCHELETRO" ? 13 : 22) + wizardLevel}
+                {(type === "SCHELETRO" ? 13 : 22) + (wizardLevel >= 6 ? wizardLevel : 0)}
               </span>
             </p>
             {wizardLevel >= 6 && (
