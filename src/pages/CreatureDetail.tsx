@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useCreatures } from "@/hooks/useCreatures";
+import { getDamageBonus } from "@/types/creature";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -224,38 +225,47 @@ const CreatureDetail = () => {
                 <h2 className="text-xl font-bold">Azioni</h2>
               </div>
               <div className="space-y-3">
-                {creature.actions.map((action, idx) => (
-                  <div key={idx} className="bg-muted/50 p-4 rounded space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-bold text-lg text-foreground">{action.name}</h3>
-                      <span className="text-xs uppercase bg-primary/20 text-primary px-2 py-1 rounded">
-                        {action.type === "melee" ? "Mischia" : "Distanza"}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <span className="text-muted-foreground">Tiro per Colpire:</span>
-                        <span className="ml-2 font-semibold text-foreground">+{action.toHit}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Danni:</span>
-                        <span className="ml-2 font-semibold text-foreground">
-                          {action.damageDice} + {action.damageBonus} + {creature.proficiencyBonus}
+                {creature.actions.map((action, idx) => {
+                  const damageBonus = getDamageBonus(creature.wizardLevel);
+                  const totalDamage = action.damageBonus + damageBonus;
+                  return (
+                    <div key={idx} className="bg-muted/50 p-4 rounded space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-bold text-lg text-foreground">{action.name}</h3>
+                        <span className="text-xs uppercase bg-primary/20 text-primary px-2 py-1 rounded">
+                          {action.type === "melee" ? "Mischia" : "Distanza"}
                         </span>
                       </div>
-                      {action.range && (
-                        <div className="col-span-2">
-                          <span className="text-muted-foreground">Gittata:</span>
-                          <span className="ml-2 font-semibold text-foreground">{action.range}</span>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Tiro per Colpire:</span>
+                          <span className="ml-2 font-semibold text-foreground">+{action.toHit}</span>
                         </div>
-                      )}
-                      <div className="col-span-2">
-                        <span className="text-muted-foreground">Tipo di Danno:</span>
-                        <span className="ml-2 font-semibold text-foreground">{action.damageType}</span>
+                        <div>
+                          <span className="text-muted-foreground">Danni:</span>
+                          <span className="ml-2 font-semibold text-foreground">
+                            {action.damageDice} + {totalDamage}
+                            {creature.wizardLevel >= 6 && (
+                              <span className="text-xs text-primary ml-1">
+                                ({action.damageBonus}+{damageBonus})
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        {action.range && (
+                          <div className="col-span-2">
+                            <span className="text-muted-foreground">Gittata:</span>
+                            <span className="ml-2 font-semibold text-foreground">{action.range}</span>
+                          </div>
+                        )}
+                        <div className="col-span-2">
+                          <span className="text-muted-foreground">Tipo di Danno:</span>
+                          <span className="ml-2 font-semibold text-foreground">{action.damageType}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
 

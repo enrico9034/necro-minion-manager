@@ -49,12 +49,20 @@ const Documentation = () => {
                 <h3 className="text-lg font-semibold text-foreground mb-2">
                   1. Evocare una Nuova Creatura
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground mb-2">
                   Clicca sul pulsante <strong>"Evoca Non-Morto"</strong> nella dashboard principale.
                   Inserisci un nome per la tua creatura, seleziona il tipo (Scheletro o Zombi), e specifica
-                  il tuo livello da mago e bonus di competenza. L'app calcolerà automaticamente i PF massimi
-                  basandosi sul template della creatura.
+                  il tuo livello da mago. L'app calcolerà automaticamente i PF massimi e i bonus ai danni
+                  basandosi sul template della creatura e sul tuo livello.
                 </p>
+                <div className="bg-primary/10 border border-primary/30 p-3 rounded mt-2 text-sm">
+                  <p className="font-semibold text-primary mb-1">⚡ Servitori Non Morti (Livello 6+)</p>
+                  <p className="text-muted-foreground">
+                    Se sei almeno livello 6, le tue creature ottengono automaticamente il tuo bonus di 
+                    competenza ai danni con le armi, secondo le regole di D&D 5e. Questo bonus viene 
+                    calcolato e visualizzato automaticamente.
+                  </p>
+                </div>
               </div>
 
               <div>
@@ -119,7 +127,7 @@ const Documentation = () => {
                     Crea un nuovo template seguendo il formato di <code>SKELETON_TEMPLATE</code> o{" "}
                     <code>ZOMBIE_TEMPLATE</code>:
                     <pre className="bg-muted p-4 rounded mt-2 text-sm overflow-x-auto">
-                      {`export const GHOUL_TEMPLATE: Omit<Creature, "id" | "name" | "wizardLevel" | "proficiencyBonus" | "hpMax" | "hpCurrent"> = {
+                      {`export const GHOUL_TEMPLATE: Omit<Creature, "id" | "name" | "wizardLevel" | "hpMax" | "hpCurrent"> = {
   type: "GHOUL",
   baseHp: 22,
   ac: 12,
