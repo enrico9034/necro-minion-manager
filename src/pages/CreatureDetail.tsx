@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useCreatures } from "@/hooks/useCreatures";
+import { useSettings } from "@/hooks/useSettings";
 import { getDamageBonus } from "@/types/creature";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +15,7 @@ const CreatureDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { creatures, updateCreature, deleteCreature, updateCreatureHP } = useCreatures();
+  const { settings } = useSettings();
   const creature = creatures.find((c) => c.id === id);
 
   const [newItemName, setNewItemName] = useState("");
@@ -144,9 +146,9 @@ const CreatureDetail = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => updateCreatureHP(creature.id, Math.min(creature.hpMax, creature.hpCurrent + 10))}
+                    onClick={() => updateCreatureHP(creature.id, Math.min(creature.hpMax, creature.hpCurrent + 1))}
                   >
-                    +10
+                    +1
                   </Button>
                   <Button
                     variant="outline"
@@ -227,7 +229,7 @@ const CreatureDetail = () => {
               <div className="space-y-3">
                 {creature.actions.map((action, idx) => {
                   const damageBonus = getDamageBonus(creature.wizardLevel);
-                  const totalDamage = action.damageBonus + damageBonus;
+                  const totalDamage = action.damageBonus + damageBonus + settings.globalDamageBonus;
                   return (
                     <div key={idx} className="bg-muted/50 p-4 rounded space-y-2">
                       <div className="flex items-center justify-between">
@@ -245,9 +247,11 @@ const CreatureDetail = () => {
                           <span className="text-muted-foreground">Danni:</span>
                           <span className="ml-2 font-semibold text-foreground">
                             {action.damageDice} + {totalDamage}
-                            {creature.wizardLevel >= 6 && (
+                            {(creature.wizardLevel >= 6 || settings.globalDamageBonus > 0) && (
                               <span className="text-xs text-primary ml-1">
-                                ({action.damageBonus}+{damageBonus})
+                                ({action.damageBonus}
+                                {damageBonus > 0 && `+${damageBonus}`}
+                                {settings.globalDamageBonus > 0 && `+${settings.globalDamageBonus}`})
                               </span>
                             )}
                           </span>

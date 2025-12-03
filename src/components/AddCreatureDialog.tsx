@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { Creature, SKELETON_TEMPLATE, ZOMBIE_TEMPLATE, CreatureType, getDamageBonus } from "@/types/creature";
+import { useSettings } from "@/hooks/useSettings";
 import { toast } from "sonner";
 
 interface AddCreatureDialogProps {
@@ -13,10 +14,16 @@ interface AddCreatureDialogProps {
 }
 
 export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
+  const { settings } = useSettings();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState<CreatureType>("SCHELETRO");
-  const [wizardLevel, setWizardLevel] = useState(1);
+  const [wizardLevel, setWizardLevel] = useState(settings.wizardLevel);
+
+  // Aggiorna il livello quando cambiano le impostazioni
+  useEffect(() => {
+    setWizardLevel(settings.wizardLevel);
+  }, [settings.wizardLevel]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +34,8 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
     }
 
     const template = type === "SCHELETRO" ? SKELETON_TEMPLATE : ZOMBIE_TEMPLATE;
-    const hpMax = template.baseHp + (wizardLevel >= 6 ? wizardLevel : 0);
+    const baseLevelBonus = wizardLevel >= 6 ? wizardLevel : 0;
+    const hpMax = template.baseHp + baseLevelBonus + settings.globalHPBonus;
 
     const newCreature: Creature = {
       ...template,
@@ -43,7 +51,7 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
     setOpen(false);
     setName("");
     setType("SCHELETRO");
-    setWizardLevel(1);
+    setWizardLevel(settings.wizardLevel);
   };
 
   return (
@@ -102,12 +110,18 @@ export const AddCreatureDialog = ({ onAdd }: AddCreatureDialogProps) => {
             <p className="text-muted-foreground">
               PF Massimi:{" "}
               <span className="font-bold text-foreground">
-                {(type === "SCHELETRO" ? 13 : 22) + (wizardLevel >= 6 ? wizardLevel : 0)}
+                {(type === "SCHELETRO" ? 13 : 22) + (wizardLevel >= 6 ? wizardLevel : 0) + settings.globalHPBonus}
               </span>
+              {settings.globalHPBonus > 0 && (
+                <span className="text-xs text-primary ml-2">
+                  (+{settings.globalHPBonus} bonus globale)
+                </span>
+              )}
             </p>
-            {wizardLevel >= 6 && (
+            {(wizardLevel >= 6 || settings.globalDamageBonus > 0) && (
               <p className="text-xs text-primary">
-                ✓ Bonus ai danni: +{getDamageBonus(wizardLevel)} (Servitori Non Morti)
+                ✓ Bonus ai danni: +{getDamageBonus(wizardLevel) + settings.globalDamageBonus}
+                {settings.globalDamageBonus > 0 && ` (incluso +${settings.globalDamageBonus} globale)`}
               </p>
             )}
           </div>
