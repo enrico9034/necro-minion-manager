@@ -1,8 +1,10 @@
 import { Creature, getDamageBonus } from "@/types/creature";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { DiceRollButton } from "@/components/DiceRollButton";
 import { Heart, Skull, Swords, Eye, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 interface CreatureCardProps {
   creature: Creature;
@@ -113,6 +115,25 @@ export const CreatureCard = ({ creature, onDelete, onUpdateHP }: CreatureCardPro
           </div>
         </div>
 
+        {/* Initiative Roll */}
+        <div className="pt-2">
+          <DiceRollButton
+            label="Tira Iniziativa"
+            bonus={creature.initiative}
+            variant="secondary"
+            size="sm"
+            className="w-full"
+            onRoll={(total, natural) => {
+              const isCrit = natural === 20;
+              const isFail = natural === 1;
+              toast.success(
+                `${creature.name} ha tirato ${total} per l'iniziativa!${isCrit ? " 🎯 CRITICO!" : isFail ? " 💀" : ""}`,
+                { duration: 3000 }
+              );
+            }}
+          />
+        </div>
+
         {/* Actions */}
         <div className="space-y-2 pt-2">
           <div className="flex items-center gap-2 text-sm font-semibold text-primary">
@@ -123,8 +144,28 @@ export const CreatureCard = ({ creature, onDelete, onUpdateHP }: CreatureCardPro
             const damageBonus = getDamageBonus(creature.wizardLevel);
             const totalDamage = action.damageBonus + damageBonus;
             return (
-              <div key={idx} className="text-sm bg-muted/50 p-2 rounded">
-                <p className="font-semibold text-foreground">{action.name}</p>
+              <div key={idx} className="text-sm bg-muted/50 p-2 rounded space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <p className="font-semibold text-foreground">{action.name}</p>
+                  </div>
+                  <DiceRollButton
+                    label=""
+                    bonus={action.toHit}
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 p-0 shrink-0"
+                    showResultInline={true}
+                    onRoll={(total, natural) => {
+                      const isCrit = natural === 20;
+                      const isFail = natural === 1;
+                      toast.success(
+                        `${creature.name} - ${action.name}: ${total}${isCrit ? " 🎯 CRITICO!" : isFail ? " 💀" : ""}`,
+                        { duration: 2500 }
+                      );
+                    }}
+                  />
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Colpire: +{action.toHit} | Danno: {action.damageDice}+{totalDamage}
                 </p>

@@ -3,11 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Settings, Sparkles, Heart, Swords } from "lucide-react";
+import { Settings, Sparkles, Heart, Swords, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SettingsPage = () => {
+  const navigate = useNavigate();
   const { settings, updateSettings } = useSettings();
   const [wizardLevel, setWizardLevel] = useState(settings.wizardLevel);
   const [globalHPBonus, setGlobalHPBonus] = useState(settings.globalHPBonus);
@@ -27,11 +29,16 @@ const SettingsPage = () => {
       {/* Header */}
       <div className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3">
-            <Settings className="w-8 h-8 text-primary" />
-            <div>
-              <h1 className="text-4xl font-bold text-primary glow-necro">Impostazioni Necromante</h1>
-              <p className="text-muted-foreground mt-1">Configura il tuo personaggio e i bonus globali</p>
+          <div className="flex items-center gap-4 mb-4">
+            <Button variant="outline" size="icon" onClick={() => navigate("/")}>
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <div className="flex items-center gap-3">
+              <Settings className="w-8 h-8 text-primary" />
+              <div>
+                <h1 className="text-4xl font-bold text-primary glow-necro">Impostazioni Necromante</h1>
+                <p className="text-muted-foreground mt-1">Configura il tuo personaggio e i bonus globali</p>
+              </div>
             </div>
           </div>
         </div>

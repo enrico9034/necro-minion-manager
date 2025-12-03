@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { DiceRollButton } from "@/components/DiceRollButton";
 import { ArrowLeft, Heart, Shield, Zap, Eye, Skull, Swords, Sparkles, Package, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -197,27 +198,40 @@ const CreatureDetail = () => {
                 <Zap className="w-5 h-5 text-secondary" />
                 <h2 className="text-xl font-bold">Caratteristiche</h2>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                {Object.entries(creature.stats).map(([key, value]) => (
-                  <div key={key} className="bg-muted/50 p-4 rounded text-center">
-                    <p className="text-xs text-muted-foreground uppercase mb-1">
-                      {key === "strength"
-                        ? "FOR"
-                        : key === "dexterity"
-                        ? "DES"
-                        : key === "constitution"
-                        ? "COS"
-                        : key === "intelligence"
-                        ? "INT"
-                        : key === "wisdom"
-                        ? "SAG"
-                        : "CAR"}
-                    </p>
-                    <p className="text-xl font-bold text-foreground">{value}</p>
-                    <p className="text-sm text-primary font-semibold">{statModifier(value)}</p>
-                  </div>
-                ))}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-4">
+                {Object.entries(creature.stats).map(([key, value]) => {
+                  const modifier = Math.floor((value - 10) / 2);
+                  const modifierColor = modifier > 0 ? "text-green-500" : modifier < 0 ? "text-red-500" : "text-yellow-500";
+                  return (
+                    <div key={key} className="bg-muted/50 p-4 rounded text-center">
+                      <p className="text-xs text-muted-foreground uppercase mb-1">
+                        {key === "strength"
+                          ? "FOR"
+                          : key === "dexterity"
+                          ? "DES"
+                          : key === "constitution"
+                          ? "COS"
+                          : key === "intelligence"
+                          ? "INT"
+                          : key === "wisdom"
+                          ? "SAG"
+                          : "CAR"}
+                      </p>
+                      <p className="text-xl font-bold text-foreground">{value}</p>
+                      <p className={`text-sm font-semibold ${modifierColor}`}>{statModifier(value)}</p>
+                    </div>
+                  );
+                })}
               </div>
+              <DiceRollButton
+                label="Tiro d20 Secco"
+                bonus={0}
+                variant="secondary"
+                className="w-full"
+                onRoll={(total) => {
+                  toast.success(`${creature.name} ha tirato ${total}!`, { duration: 2500 });
+                }}
+              />
             </Card>
 
             {/* Actions */}
@@ -231,7 +245,7 @@ const CreatureDetail = () => {
                   const damageBonus = getDamageBonus(creature.wizardLevel);
                   const totalDamage = action.damageBonus + damageBonus + settings.globalDamageBonus;
                   return (
-                    <div key={idx} className="bg-muted/50 p-4 rounded space-y-2">
+                    <div key={idx} className="bg-muted/50 p-4 rounded space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="font-bold text-lg text-foreground">{action.name}</h3>
                         <span className="text-xs uppercase bg-primary/20 text-primary px-2 py-1 rounded">
@@ -267,6 +281,21 @@ const CreatureDetail = () => {
                           <span className="ml-2 font-semibold text-foreground">{action.damageType}</span>
                         </div>
                       </div>
+                      <DiceRollButton
+                        label={`Tiro per Colpire - ${action.name}`}
+                        bonus={action.toHit}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onRoll={(total, natural) => {
+                          const isCrit = natural === 20;
+                          const isFail = natural === 1;
+                          toast.success(
+                            `${action.name}: ${total} per colpire!${isCrit ? " 🎯 CRITICO! Raddoppia i dadi!" : isFail ? " 💀 FALLIMENTO!" : ""}`,
+                            { duration: 3000 }
+                          );
+                        }}
+                      />
                     </div>
                   );
                 })}
