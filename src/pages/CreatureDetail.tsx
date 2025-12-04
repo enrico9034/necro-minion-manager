@@ -236,9 +236,35 @@ const CreatureDetail = () => {
 
             {/* Actions */}
             <Card className="card-necro border-border p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Swords className="w-5 h-5 text-destructive" />
-                <h2 className="text-xl font-bold">Azioni</h2>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Swords className="w-5 h-5 text-destructive" />
+                  <h2 className="text-xl font-bold">Azioni</h2>
+                </div>
+                {creature.actions.length > 1 && (
+                  <div className="flex gap-2">
+                    {creature.actions.map((action, idx) => {
+                      const isActive = creature.activeActionIndex?.includes(idx) ?? false;
+                      return (
+                        <Button
+                          key={idx}
+                          variant={isActive ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => {
+                            const current = creature.activeActionIndex || [];
+                            const updated = isActive
+                              ? current.filter(i => i !== idx)
+                              : [...current, idx];
+                            updateCreature(creature.id, { activeActionIndex: updated });
+                            toast.success(isActive ? `${action.name} rimossa` : `${action.name} aggiunta`);
+                          }}
+                        >
+                          {action.name}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
               <div className="space-y-3">
                 {creature.actions.map((action, idx) => {
@@ -300,6 +326,151 @@ const CreatureDetail = () => {
                   );
                 })}
               </div>
+            </Card>
+
+            {/* Custom Actions */}
+            <Card className="card-necro border-border p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Swords className="w-5 h-5 text-secondary" />
+                  <h2 className="text-xl font-bold">Attacchi Personalizzati</h2>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    const newAction = {
+                      name: "Nuovo Attacco",
+                      type: "melee" as const,
+                      toHit: 2,
+                      damageDice: "1d6",
+                      damageBonus: 0,
+                      damageType: "Perforante",
+                    };
+                    updateCreature(creature.id, {
+                      customActions: [...(creature.customActions || []), newAction],
+                    });
+                    toast.success("Attacco aggiunto!");
+                  }}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Aggiungi Attacco
+                </Button>
+              </div>
+              {(!creature.customActions || creature.customActions.length === 0) ? (
+                <p className="text-sm text-muted-foreground italic">Nessun attacco personalizzato</p>
+              ) : (
+                <div className="space-y-3">
+                  {creature.customActions.map((action, idx) => (
+                    <div key={idx} className="bg-muted/50 p-4 rounded space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Input
+                          value={action.name}
+                          onChange={(e) => {
+                            const updated = [...(creature.customActions || [])];
+                            updated[idx] = { ...action, name: e.target.value };
+                            updateCreature(creature.id, { customActions: updated });
+                          }}
+                          className="font-bold text-lg bg-background max-w-xs"
+                        />
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => {
+                            const updated = (creature.customActions || []).filter((_, i) => i !== idx);
+                            updateCreature(creature.id, { customActions: updated });
+                            toast.success("Attacco rimosso!");
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-xs">Tipo</Label>
+                          <select
+                            value={action.type}
+                            onChange={(e) => {
+                              const updated = [...(creature.customActions || [])];
+                              updated[idx] = { ...action, type: e.target.value as "melee" | "ranged" };
+                              updateCreature(creature.id, { customActions: updated });
+                            }}
+                            className="w-full p-2 rounded bg-background border border-border text-sm"
+                          >
+                            <option value="melee">Mischia</option>
+                            <option value="ranged">Distanza</option>
+                          </select>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Tiro per Colpire</Label>
+                          <Input
+                            type="number"
+                            value={action.toHit}
+                            onChange={(e) => {
+                              const updated = [...(creature.customActions || [])];
+                              updated[idx] = { ...action, toHit: Number(e.target.value) };
+                              updateCreature(creature.id, { customActions: updated });
+                            }}
+                            className="bg-background"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Dadi Danno</Label>
+                          <Input
+                            value={action.damageDice}
+                            onChange={(e) => {
+                              const updated = [...(creature.customActions || [])];
+                              updated[idx] = { ...action, damageDice: e.target.value };
+                              updateCreature(creature.id, { customActions: updated });
+                            }}
+                            placeholder="1d6"
+                            className="bg-background"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Bonus Danno Base</Label>
+                          <Input
+                            type="number"
+                            value={action.damageBonus}
+                            onChange={(e) => {
+                              const updated = [...(creature.customActions || [])];
+                              updated[idx] = { ...action, damageBonus: Number(e.target.value) };
+                              updateCreature(creature.id, { customActions: updated });
+                            }}
+                            className="bg-background"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Tipo di Danno</Label>
+                          <Input
+                            value={action.damageType}
+                            onChange={(e) => {
+                              const updated = [...(creature.customActions || [])];
+                              updated[idx] = { ...action, damageType: e.target.value };
+                              updateCreature(creature.id, { customActions: updated });
+                            }}
+                            className="bg-background"
+                          />
+                        </div>
+                        {action.type === "ranged" && (
+                          <div>
+                            <Label className="text-xs">Gittata</Label>
+                            <Input
+                              value={action.range || ""}
+                              onChange={(e) => {
+                                const updated = [...(creature.customActions || [])];
+                                updated[idx] = { ...action, range: e.target.value };
+                                updateCreature(creature.id, { customActions: updated });
+                              }}
+                              placeholder="24/96m"
+                              className="bg-background"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
 
             {/* Special Abilities */}
