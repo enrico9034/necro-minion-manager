@@ -1,8 +1,28 @@
 {
-  "name": "vite_react_shadcn_ts",
-  "private": true,
-  "version": "0.0.0",
+  "name": "necro-minion-manager",
+  "version": "1.0.0",
+  "description": "A Progressive Web App to manage your undead minions in D&D 5e",
   "type": "module",
+  "author": "Enrico",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enrico9034/necro-minion-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/enrico9034/necro-minion-manager/issues"
+  },
+  "homepage": "https://enrico9034.github.io/necro-minion-manager/",
+  "keywords": [
+    "dnd",
+    "dungeons-and-dragons",
+    "necromancer",
+    "undead",
+    "creature-manager",
+    "pwa",
+    "react",
+    "typescript"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
