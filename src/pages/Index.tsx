@@ -1,12 +1,14 @@
 import { useCreatures } from "@/hooks/useCreatures";
+import { useSettings } from "@/hooks/useSettings";
 import { CreatureCard } from "@/components/CreatureCard";
 import { AddCreatureDialog } from "@/components/AddCreatureDialog";
-import { Skull, BookOpen } from "lucide-react";
+import { Skull, BookOpen, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const Index = () => {
   const { creatures, addCreature, deleteCreature, updateCreatureHP } = useCreatures();
+  const { settings } = useSettings();
 
   const skeletons = creatures.filter((c) => c.type === "SCHELETRO");
   const zombies = creatures.filter((c) => c.type === "ZOMBIE");
@@ -25,11 +27,19 @@ const Index = () => {
                   Grimorio del Necromante
                 </h1>
               </div>
-              <p className="text-muted-foreground text-lg">
-                Gestisci il tuo esercito di non-morti • {creatures.length} creature evocate
+              <p className="text-muted-foreground text-lg flex items-center gap-2 justify-center md:justify-start flex-wrap">
+                <span>Livello {settings.wizardLevel} Necromante</span>
+                <span>•</span>
+                <span>{creatures.length} creature evocate</span>
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap justify-center">
+              <Button asChild variant="outline" size="lg">
+                <Link to="/settings">
+                  <Settings className="w-5 h-5 mr-2" />
+                  Impostazioni
+                </Link>
+              </Button>
               <Button asChild variant="outline" size="lg">
                 <Link to="/docs">
                   <BookOpen className="w-5 h-5 mr-2" />

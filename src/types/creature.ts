@@ -50,6 +50,8 @@ export interface Creature {
   specialAbilities: SpecialAbility[];
   items: Item[];
   notes?: string;
+  activeActionIndex?: number[]; // Indici delle azioni attive (per scheletri con più armi)
+  customActions?: Action[]; // Attacchi custom aggiunti dall'utente
 }
 
 export const calculateProficiencyBonus = (wizardLevel: number): number => {
