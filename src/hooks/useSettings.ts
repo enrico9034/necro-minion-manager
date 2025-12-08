@@ -23,7 +23,7 @@ export const useSettings = () => {
       try {
         setSettings(JSON.parse(stored));
       } catch (e) {
-        console.error("Error loading settings:", e);
+        // Failed to parse settings, use defaults
         setSettings(DEFAULT_SETTINGS);
       }
     }

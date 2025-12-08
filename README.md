@@ -1,6 +1,13 @@
 # 🧙‍♂️ Grimorio del Necromante
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Pages](https://img.shields.io/badge/demo-live-success)](https://enrico9034.github.io/necro-minion-manager/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3-blue)](https://react.dev/)
+
 Gestisci il tuo esercito di creature non-morte in Dungeons & Dragons 5e. Traccia punti ferita, statistiche, inventario e abilità speciali per Scheletri, Zombie e altre creature.
+
+🎮 **[Prova la Demo Live](https://enrico9034.github.io/necro-minion-manager/)**
 
 ## 🎮 Caratteristiche
 
@@ -34,7 +41,7 @@ npm install
 npm run dev
 ```
 
-L'app sarà disponibile su `http://localhost:8080`
+L'app sarà disponibile su `http://localhost:8080/necro-minion-manager/`.
 
 ### Build per Produzione
 
@@ -88,9 +95,40 @@ netlify deploy --prod --dir=dist
 ```
 
 ### GitHub Pages
-Basta abilitare GitHub Pages nelle impostazioni del repository e puntare alla cartella `dist/`.
+
+```sh
+npm run deploy
+```
+
+Poi configura GitHub Pages nelle impostazioni del repository per usare il branch `gh-pages`.
+
+## 🤝 Contribuire
+
+I contributi sono benvenuti! Leggi [CONTRIBUTING.md](CONTRIBUTING.md) per le linee guida.
+
+1. Fork del progetto
+2. Crea il tuo feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit delle modifiche (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Push al branch (`git push origin feature/AmazingFeature`)
+5. Apri una Pull Request
 
 ## 📝 Licenza
 
-Questo progetto è open source e disponibile per uso personale.
+Questo progetto è rilasciato sotto licenza MIT - vedi il file [LICENSE](LICENSE) per i dettagli.
+
+## 👤 Autore
+
+**Enrico**
+
+- GitHub: [@enrico9034](https://github.com/enrico9034)
+
+## ⭐ Supporta il Progetto
+
+Se questo progetto ti è stato utile, lascia una stella ⭐️ su GitHub!
+
+## 🙏 Ringraziamenti
+
+- [shadcn/ui](https://ui.shadcn.com/) per i componenti UI
+- [Lucide](https://lucide.dev/) per le icone
+- Wizards of the Coast per D&D 5e
 
