@@ -4,6 +4,7 @@
 [![GitHub Pages](https://img.shields.io/badge/demo-live-success)](https://enrico9034.github.io/necro-minion-manager/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-blue)](https://react.dev/)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?logo=buy-me-a-coffee)](https://buymeacoffee.com/enrico9034r)
 
 Gestisci il tuo esercito di creature non-morte in Dungeons & Dragons 5e. Traccia punti ferita, statistiche, inventario e abilità speciali per Scheletri, Zombie e altre creature.
 
@@ -121,10 +122,13 @@ Questo progetto è rilasciato sotto licenza MIT - vedi il file [LICENSE](LICENSE
 **Enrico**
 
 - GitHub: [@enrico9034](https://github.com/enrico9034)
-
 ## ⭐ Supporta il Progetto
 
 Se questo progetto ti è stato utile, lascia una stella ⭐️ su GitHub!
+
+Oppure offrimi un caffè ☕:
+
+<a href="https://buymeacoffee.com/enrico9034r" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 ## 🙏 Ringraziamenti
 
