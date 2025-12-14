@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "apple-touch-icon.png"],
+      includeAssets: ["favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png"],
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
@@ -41,22 +41,28 @@ export default defineConfig(({ mode }) => ({
         theme_color: "#059669",
         background_color: "#0a0a0a",
         display: "standalone",
-        start_url: "/",
-        scope: "/",
+        start_url: "/necro-minion-manager/",
+        scope: "/necro-minion-manager/",
         orientation: "any",
         categories: ["games", "utilities"],
         icons: [
           {
-            src: "/icon-192.svg",
+            src: "/necro-minion-manager/icon-192.png",
             sizes: "192x192",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any maskable",
           },
           {
-            src: "/icon-512.svg",
+            src: "/necro-minion-manager/icon-512.png",
             sizes: "512x512",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any maskable",
+          },
+          {
+            src: "/necro-minion-manager/apple-touch-icon.png",
+            sizes: "180x180",
+            type: "image/png",
+            purpose: "any",
           },
         ],
       },
