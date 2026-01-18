@@ -175,19 +175,31 @@ const CreatureDetail = () => {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-muted/50 p-4 rounded text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Classe Armatura</p>
-                  <p className="text-3xl font-bold text-foreground">{creature.ac}</p>
+                  <p className="text-sm text-muted-foreground mb-2">Classe Armatura</p>
+                  <Input
+                    type="number"
+                    value={creature.ac}
+                    onChange={(e) => updateCreature(creature.id, { ac: Number(e.target.value) })}
+                    className="text-3xl font-bold text-center bg-background border-border h-16"
+                  />
                 </div>
                 <div className="bg-muted/50 p-4 rounded text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Velocità</p>
-                  <p className="text-3xl font-bold text-foreground">{creature.speed}</p>
+                  <p className="text-sm text-muted-foreground mb-2">Velocità</p>
+                  <Input
+                    type="text"
+                    value={creature.speed}
+                    onChange={(e) => updateCreature(creature.id, { speed: e.target.value })}
+                    className="text-3xl font-bold text-center bg-background border-border h-16"
+                  />
                 </div>
                 <div className="bg-muted/50 p-4 rounded text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Iniziativa</p>
-                  <p className="text-3xl font-bold text-foreground">
-                    {creature.initiative >= 0 ? "+" : ""}
-                    {creature.initiative}
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-2">Iniziativa</p>
+                  <Input
+                    type="number"
+                    value={creature.initiative}
+                    onChange={(e) => updateCreature(creature.id, { initiative: Number(e.target.value) })}
+                    className="text-3xl font-bold text-center bg-background border-border h-16"
+                  />
                 </div>
               </div>
             </Card>
