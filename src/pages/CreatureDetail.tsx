@@ -1,14 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useCreatures } from "@/hooks/useCreatures";
 import { useSettings } from "@/hooks/useSettings";
-import { getDamageBonus } from "@/types/creature";
+import { getDamageBonus, calculateProficiencyBonus } from "@/types/creature";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DiceRollButton } from "@/components/DiceRollButton";
-import { ArrowLeft, Heart, Shield, Zap, Eye, Skull, Swords, Sparkles, Package, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Heart, Shield, Zap, Eye, Skull, Swords, Sparkles, Package, Plus, Trash2, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -71,6 +71,37 @@ const CreatureDetail = () => {
     toast.success("Oggetto rimosso!");
   };
 
+  const updateStats = () => {
+    if (creature.wizardLevel < 6) {
+      toast.error("Il livello del mago deve essere 6 o superiore per aggiornare le statistiche!");
+      return;
+    }
+
+    const profBonus = calculateProficiencyBonus(creature.wizardLevel);
+    const newHpMax = creature.baseHp + creature.wizardLevel;
+    
+    // Aggiorna HP massimi e mantieni la proporzione degli HP correnti
+    const hpRatio = creature.hpCurrent / creature.hpMax;
+    const newHpCurrent = Math.floor(newHpMax * hpRatio);
+    
+    // Aggiorna il bonus per colpire per tutte le azioni
+    const updatedActions = creature.actions.map(action => ({
+      ...action,
+      toHit: profBonus + 2, // Bonus competenza + modificatore (tipicamente +2 per DEX)
+    }));
+
+    updateCreature(creature.id, {
+      hpMax: newHpMax,
+      hpCurrent: newHpCurrent,
+      actions: updatedActions,
+    });
+
+    toast.success(
+      `Statistiche aggiornate! HP: ${newHpMax}, Bonus Competenza: +${profBonus}, Bonus Danni: +${profBonus}`,
+      { duration: 4000 }
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -112,6 +143,18 @@ const CreatureDetail = () => {
               <div className="flex items-center gap-2 mb-4">
                 <Heart className="w-5 h-5 text-destructive" />
                 <h2 className="text-xl font-bold">Punti Ferita</h2>
+                {creature.wizardLevel >= 6 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={updateStats}
+                    className="ml-auto"
+                    title="Aggiorna HP massimi e statistiche in base al livello"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Aggiorna Statistiche
+                  </Button>
+                )}
               </div>
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-lg">
@@ -163,6 +206,11 @@ const CreatureDetail = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Base: {creature.baseHp} + Livello Mago: {creature.wizardLevel}
+                  {creature.wizardLevel >= 6 && (
+                    <span className="text-primary ml-2">
+                      (Bonus Competenza: +{calculateProficiencyBonus(creature.wizardLevel)}, Bonus Danni: +{getDamageBonus(creature.wizardLevel)})
+                    </span>
+                  )}
                 </p>
               </div>
             </Card>
@@ -173,7 +221,22 @@ const CreatureDetail = () => {
                 <Shield className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-bold">Statistiche di Combattimento</h2>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-4 gap-4">
+                <div className="bg-muted/50 p-4 rounded text-center">
+                  <p className="text-sm text-muted-foreground mb-2">Livello Mago</p>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={creature.wizardLevel}
+                    onChange={(e) => {
+                      const newLevel = Math.max(1, Math.min(20, Number(e.target.value)));
+                      updateCreature(creature.id, { wizardLevel: newLevel });
+                      toast.success(`Livello aggiornato a ${newLevel}!`);
+                    }}
+                    className="text-3xl font-bold text-center bg-background border-border h-16"
+                  />
+                </div>
                 <div className="bg-muted/50 p-4 rounded text-center">
                   <p className="text-sm text-muted-foreground mb-2">Classe Armatura</p>
                   <Input
