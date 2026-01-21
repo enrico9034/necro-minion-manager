@@ -84,21 +84,45 @@ const CreatureDetail = () => {
     const hpRatio = creature.hpCurrent / creature.hpMax;
     const newHpCurrent = Math.floor(newHpMax * hpRatio);
     
-    // Aggiorna il bonus per colpire per tutte le azioni
-    const updatedActions = creature.actions.map(action => ({
-      ...action,
-      toHit: profBonus + 2, // Bonus competenza + modificatore (tipicamente +2 per DEX)
-    }));
-
+    // Il tiro per colpire NON viene modificato dal bonus di competenza
+    // Solo i danni vengono aumentati (gestito da getDamageBonus)
     updateCreature(creature.id, {
       hpMax: newHpMax,
       hpCurrent: newHpCurrent,
-      actions: updatedActions,
     });
 
     toast.success(
-      `Statistiche aggiornate! HP: ${newHpMax}, Bonus Competenza: +${profBonus}, Bonus Danni: +${profBonus}`,
+      `Statistiche aggiornate! HP: ${newHpMax}, Bonus Danni: +${profBonus}`,
       { duration: 4000 }
+    );
+  };
+
+  const resetToHit = () => {
+    // Ripristina i valori originali del tiro per colpire
+    const originalToHit = {
+      SCHELETRO: 4,
+      ZOMBIE: 3,
+    };
+
+    const correctToHit = creature.type !== "CUSTOM" ? originalToHit[creature.type] : null;
+    
+    if (correctToHit === null) {
+      toast.error("Non posso correggere creature personalizzate automaticamente!");
+      return;
+    }
+
+    const correctedActions = creature.actions.map(action => ({
+      ...action,
+      toHit: correctToHit,
+    }));
+
+    updateCreature(creature.id, {
+      actions: correctedActions,
+    });
+
+    toast.success(
+      `Tiro per colpire ripristinato a +${correctToHit} per tutte le azioni!`,
+      { duration: 3000 }
     );
   };
 
@@ -143,18 +167,30 @@ const CreatureDetail = () => {
               <div className="flex items-center gap-2 mb-4">
                 <Heart className="w-5 h-5 text-destructive" />
                 <h2 className="text-xl font-bold">Punti Ferita</h2>
-                {creature.wizardLevel >= 6 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={updateStats}
-                    className="ml-auto"
-                    title="Aggiorna HP massimi e statistiche in base al livello"
-                  >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Aggiorna Statistiche
-                  </Button>
-                )}
+                <div className="ml-auto flex gap-2">
+                  {creature.type !== "CUSTOM" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={resetToHit}
+                      title="Ripristina i valori originali del tiro per colpire"
+                    >
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Correggi Tiro per Colpire
+                    </Button>
+                  )}
+                  {creature.wizardLevel >= 6 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={updateStats}
+                      title="Aggiorna HP massimi in base al livello"
+                    >
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Aggiorna HP
+                    </Button>
+                  )}
+                </div>
               </div>
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-lg">
@@ -231,8 +267,18 @@ const CreatureDetail = () => {
                     value={creature.wizardLevel}
                     onChange={(e) => {
                       const newLevel = Math.max(1, Math.min(20, Number(e.target.value)));
-                      updateCreature(creature.id, { wizardLevel: newLevel });
-                      toast.success(`Livello aggiornato a ${newLevel}!`);
+                      const newHpMax = creature.baseHp + newLevel;
+                      
+                      // Mantieni la proporzione degli HP correnti
+                      const hpRatio = creature.hpCurrent / creature.hpMax;
+                      const newHpCurrent = Math.floor(newHpMax * hpRatio);
+                      
+                      updateCreature(creature.id, { 
+                        wizardLevel: newLevel,
+                        hpMax: newHpMax,
+                        hpCurrent: newHpCurrent,
+                      });
+                      toast.success(`Livello ${newLevel}: HP max ${newHpMax}!`);
                     }}
                     className="text-3xl font-bold text-center bg-background border-border h-16"
                   />
